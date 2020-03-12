@@ -49,31 +49,45 @@ include_directories(
 
 if (BUILD_SHARED_LIB)
     add_library(luasql SHARED ${LUASQL_SRCS})
+
+    SET_TARGET_PROPERTIES(luasql PROPERTIES 
+        LINK_FLAGS "-undefined dynamic_lookup" #
+        # SUFFIX ".so"
+        # OUTPUT_NAME "luasql"
+    )
+
     find_library(mysqlclient mysqlclient)
-    # find_library(xlua xlua)
-    target_link_libraries(luasql z)
     target_link_libraries(luasql ${mysqlclient})
-    target_link_libraries(luasql xlua)
+
+    # target_link_libraries(luasql z)
+
+    # find_library(xlua xlua)
+    # target_link_libraries(luasql z)
+
+    ## https://cmake.org/cmake/help/git-stage/command/target_link_options.html
+    # target_link_options(luasql 
+    #   INTERFACE lua
+    # )
 else()
     add_library(luasql STATIC ${LUASQL_SRCS})
 endif(BUILD_SHARED_LIB)
 source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} LUASQL_SRCS)
 
-if (APPLE AND BUILD_SHARED_LIB)
-	find_library(ObjC objc)
-	find_library(CoreFoundation CoreFoundation)
-	find_library(IOKit IOKit)
-    target_link_libraries(luasql 
-        ${CoreFoundation} 
-        ${IOKit} 
-        ${ObjC}
-    )
+# if (APPLE AND BUILD_SHARED_LIB)
+# 	find_library(ObjC objc)
+# 	find_library(CoreFoundation CoreFoundation)
+# 	find_library(IOKit IOKit)
+#     target_link_libraries(luasql 
+#         ${CoreFoundation} 
+#         ${IOKit} 
+#         ${ObjC}
+#     )
     
-    if(LUASQL_EXECUTABLE)
-        target_link_libraries(luasql 
-            ${CoreFoundation} 
-            ${IOKit} 
-            ${ObjC}
-        )
-    endif(LUASQL_EXECUTABLE)
-endif()
+#     if(LUASQL_EXECUTABLE)
+#         target_link_libraries(luasql 
+#             ${CoreFoundation} 
+#             ${IOKit} 
+#             ${ObjC}
+#         )
+#     endif(LUASQL_EXECUTABLE)
+# endif()
