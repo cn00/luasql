@@ -33,31 +33,46 @@ file(GLOB_RECURSE LUASQL_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/luasql.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ls_mysql.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/luasql.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/mysql/libmariadb/libmariadb/**.c
 )
 # message(stats "${LUASQL_SRCS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -p -g -O2 -Wl,-rpath=./")
 
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
+
+# add_subdirectory(mysql/libmariadb/libmariadb)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lua-5.3.5/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lua/src
     /usr/local/include/mysql
-    ${CMAKE_CURRENT_SOURCE_DIR}/../build_osx
+    # /Volumes/Data/a3/tools/xlua/build/mysql/libmariadb/include
+    # # ${CMAKE_BINARY_DIR}/libmariadb/include
+    # /Volumes/Data/hxyx/s/dep/usr/aarch64/include
+    # /Volumes/Data/hxyx/s/dep/usr/aarch64/include/mysql
+    # # /Volumes/Data/a3/tools/xlua/build/mysql/build.Android.armeabi-v7a/libmariadb/include
 )
 
+link_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/$ENV{ABI}
+    ${CMAKE_BINARY_DIR}/bin
+    # ${CMAKE_BINARY_DIR}/lib
+    /usr/local/lib/
+)
 
+message(">>> ANDROID_ABI=$ENV{ANDROID_ABI}")
 if (BUILD_SHARED_LIB)
     add_library(luasql SHARED ${LUASQL_SRCS})
+
+    # find_library(lua lua)
+    target_link_libraries(luasql mariadb liblua )
 
     SET_TARGET_PROPERTIES(luasql PROPERTIES 
         LINK_FLAGS "-undefined dynamic_lookup" #
         # SUFFIX ".so"
         # OUTPUT_NAME "luasql"
     )
-
-    find_library(mysqlclient mysqlclient)
-    target_link_libraries(luasql ${mysqlclient})
 
     # target_link_libraries(luasql z)
 

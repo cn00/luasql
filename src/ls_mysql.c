@@ -589,6 +589,7 @@ static void create_metatables (lua_State *L) {
         {"close", conn_close},
         {"ping", conn_ping},
         {"escape", escape_string},
+        {"exec",    conn_execute},
         {"execute", conn_execute},
         {"commit", conn_commit},
         {"rollback", conn_rollback},
